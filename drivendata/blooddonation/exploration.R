@@ -1,12 +1,11 @@
-# This code explores the DrivenData Blood Donation competition data set
+# This script explores the DrivenData Blood Donation competition data set
 # The data is available at http://www.drivendata.org/competitions/2/data/
-
 
 # Loading the data
 
 library('readr')
 library('corrplot')
-setwd("/Users/aperrier/apps/kaggle/ddblood/R")
+setwd("your working directory")
 train <- read_csv('../data/ddblood_train.csv')
 test  <- read_csv('../data/ddblood_test.csv')
 
@@ -40,7 +39,7 @@ boxplot(train,
 boxplot(test, add = TRUE,
         boxwex = 0.28, at = 1:3 + 0.2,
         col = "bisque", cex.axis=0.85, xaxt="n")
-legend(1.5, 80, c("Train", "Test"), 
+legend(1.5, 80, c("Train", "Test"),
        fill = c("light blue", "bisque"))
 axis(1,side = 1, at=c(1,2,3),labels=c('Recency','Frequency','Time'),tick=FALSE)
 
@@ -68,7 +67,7 @@ boxplot(train[donors,],
 boxplot(train[!donors,], add = TRUE,
         boxwex = 0.38, at = 1:3 + 0.2,
         col = "bisque", cex.axis=0.85, xaxt="n")
-legend(1, 95, c("Donation in March", "No Donation in March"), 
+legend(1, 95, c("Donation in March", "No Donation in March"),
        fill = c("light blue", "bisque"))
 axis(1,side = 1, at=c(1,2,3),labels=c('Recency','Frequency','Time'),tick=FALSE)
 
