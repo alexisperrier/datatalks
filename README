@@ -6,12 +6,16 @@ Mostly R and Python
 
 This is a work in progress and I just recently started building this new code portfolio.
 
-I am so far focusing on the Driven Data blood donation competition.
-2 scripts are available
+**Available scripts:**
 
-* Data set exploration
-* Feature importance selection and engineering.
+* Driven Data blood donation competition
 
+  * Data set exploration
+  * Feature importance selection and engineering.
+
+* Kaggle Liberty Mutual Competition
+
+  * Stacking script example
 
 
 
