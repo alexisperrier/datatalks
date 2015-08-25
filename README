@@ -2,6 +2,17 @@
 
 This repo contains some of my Machine Learning code.
 Kaggle and Driven Data competitions.
-Mostly R and Python (scikit-learn)
+Mostly R and Python
+
+This is a work in progress and I just recently started building this new code portfolio.
+
+I am so far focusing on the Driven Data blood donation competition.
+2 scripts are available
+
+* Data set exploration
+* Feature importance selection and engineering.
+
+
+
 
 
