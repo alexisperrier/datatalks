@@ -4,11 +4,6 @@ The data is stored in a MongoDB store.
 
 The twitter and MongoDB credentials are stored in a cfg file
 '''
-# todo get more than 200 tweets per user
-
-# todo: function to load twitter creds => returns twitter object
-# todo: same for MongoDB
-# get followers as a function
 
 import sys, time
 from configparser import ConfigParser
@@ -61,8 +56,8 @@ DBNAME      = config['database']['name']
 client      = MongoClient()
 db          = client[DBNAME]
 
-screen_name  = 'alexip'
-n_max_folwrs = 700
+screen_name  = 'alexip'     # The main twitter account
+n_max_folwrs = 700          # The number of followers to consider
 
 # ---------------------------------------------------------
 #  1) get follower ids
@@ -100,10 +95,11 @@ for id in flw_ids:
             item = {
                 'raw_text': text,
                 'user_id': id,
+                'n_tweets': len(tl[id])
             }
             tweets.insert_one(item)
     except TwythonRateLimitError as e:
-        # Let's wait if we hit the Rate limit
+        # Wait if we hit the Rate limit
         reset = int(twitter.get_lastfunction_header('x-rate-limit-reset'))
         wait = max(reset - time.time(), 0) + 10 # addding 10 second pad
         print("[Exception Raised] Rate limit exceeded waiting: %s", wait)
