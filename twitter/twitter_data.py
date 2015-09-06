@@ -3,6 +3,8 @@ This script retrieves the tweets of all followers of a given twitter account.
 The data is stored in a MongoDB store.
 
 The twitter and MongoDB credentials are stored in a cfg file
+
+Python: 3.4
 '''
 
 import sys, time
@@ -43,10 +45,7 @@ APP_KEY      = config['credentials']['app_key']
 APP_SECRET   = config['credentials']['app_secret']
 ACCESS_TOKEN = config['credentials']['access_token_oauth_2']
 
-# twitter = Twython(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-# twitter.verify_credentials()
 twitter     = Twython(APP_KEY, APP_SECRET, oauth_version=2)
-# ACCESS_TOKEN = twitter.obtain_access_token()
 twitter     = Twython(APP_KEY, access_token=ACCESS_TOKEN)
 
 # ---------------------------------------------------------
@@ -75,29 +74,38 @@ db.followers.insert_one({"follower_ids": flw_ids, "user": "alexip"})
 #  Get 200 tweets per follower
 #  (200 is the maximum number of tweets imposed by twitter)
 # ---------------------------------------------------------
-
-tl= dict()
 for id in flw_ids:
     try:
         # only retrieve tweets for user if we don't have them in store already
         twt = db.tweets.find({'user_id':id})
+        handle_rate_limiting()
+        params = {'user_id': id, 'count': 200, 'contributor_details': 'true' }
+        tl = twitter.get_user_timeline(**params)
+        # aggregate tweets
+        text = ' '.join( [tw['text'] for tw in tl])
+
+        item = {
+            'raw_text': text,
+            'user_id': id,
+            'n_tweets': len(tl),
+            'screen_name': tl[0]['user']['screen_name'],
+            'lang': tl[0]['lang'],
+        }
+
         if twt.count() == 0:
-            handle_rate_limiting()
-            params = {'user_id': id, 'count': 200, 'trim_user': 'true' }
-            tl[id] = twitter.get_user_timeline(**params)
-
-            # aggregate tweets
-            text = ''
-            for tw in tl[id]:
-                text += ' ' + tw['text']
-
             # store document
-            item = {
-                'raw_text': text,
-                'user_id': id,
-                'n_tweets': len(tl[id])
-            }
             tweets.insert_one(item)
+        else:
+            # update the record
+            res = db.tweets.replace_one( {'user_id':id}, item )
+            if res.matched_count == 0:
+                print("no match for id: ",id)
+            else:
+                if res.modified_count == 0:
+                    print("no modification for id: ",id)
+                else:
+                    print("replaced id ",tl[0]['user']['screen_name'],
+                            id,len(tl), tl[0]['lang'] )
     except TwythonRateLimitError as e:
         # Wait if we hit the Rate limit
         reset = int(twitter.get_lastfunction_header('x-rate-limit-reset'))
@@ -112,5 +120,10 @@ for id in flw_ids:
 # ---------------------------------------------------------
 #  check how many documents we now have in the Database
 # ---------------------------------------------------------
-documents    = [tw['raw_text']  for tw in db.tweets.find()]
+follower_docs = db.tweets.find()
+documents    = [tw['raw_text']  for tw in follower_docs]
 print("We have " + str(len(documents)) + " documents ")
+
+n_tweets = sum([tw['n_tweets']  for tw in follower_docs if 'n_tweets' in tw.keys()])
+print("Total number of tweets: ", n_tweets)
+print("On average #tweets per document: ", n_tweets / len(documents))
