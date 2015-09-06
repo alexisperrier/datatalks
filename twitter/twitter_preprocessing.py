@@ -4,7 +4,7 @@ This script
 * Loads documents as aggregation of tweets stored in a MongoDB collection
 * Cleans up the documents
 * Creates a dictionary and corpus that can be used to train an LDA model
-* Traning of the LDA model is not included but follows:
+* Training of the LDA model is not included but follows:
   lda = models.LdaModel(corpus, id2word=dictionary, num_topics=100, passes=100)
 
 Author: Alex Perrier
@@ -65,8 +65,10 @@ stoplist_tw=['amp','get','got','hey','hmm','hoo','hop','iep','let','ooo','par',
 unigrams = [ w for doc in documents for w in doc if len(w)==1]
 bigrams  = [ w for doc in documents for w in doc if len(w)==2]
 
-stoplist  = set(nltk.corpus.stopwords.words("english") + stoplist_tw + unigrams + bigrams)
-documents = [[token for token in doc if token not in stoplist] for doc in documents]
+stoplist  = set(nltk.corpus.stopwords.words("english") + stoplist_tw
+                + unigrams + bigrams)
+documents = [[token for token in doc if token not in stoplist]
+                for doc in documents]
 
 # rm numbers only words
 documents = [ [token for token in doc if len(token.strip(digits)) == len(token)]
@@ -94,7 +96,6 @@ documents = [ [token for token in doc if token_frequency[token] > 1]
 # Sort words in documents
 for doc in documents:
     doc.sort()
-
 
 # Build a dictionary where for each document each word has its own id
 dictionary = corpora.Dictionary(documents)
