@@ -17,9 +17,11 @@ This is a work in progress and I just recently started building this new code po
 
   * Stacking script example
 
-* Twitter
+* Twitter: Topic Modeling of Twitter Followers
 
   * Extract tweets from the followers of an account
+  * LDA Topic Modeling
+  * Notebook on http://nbviewer.ipython.org/github/alexperrier/datatalks/blob/master/twitter/LDAvis.ipynb#topic=18&lambda=0.59&term=
 
 
 
