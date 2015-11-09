@@ -99,7 +99,7 @@ op.add_option("-t", "--timelines",
               help="Extracts timelines of the followers from Twitter")
 
 op.add_option("-d", "--dbname", dest="dbname", default='twitter',
-              help="Name of the MongDB collection")
+              help="Name of the MongDB database")
 
 op.add_option("-n", "--n_followers", dest="n_followers", default='5000',
               help="Number of follower IDs; 5000 at a time")
